@@ -12,8 +12,15 @@ const users = [
   {
     id: 'fundos',
     title: 'Fundos',
-    subtitle: 'Nacionais',
+    subtitle: 'De investimentos',
     avatar: require('../assets/images/investimento.png'),
+  },
+
+  {
+    id: 'previdencias',
+    title: 'Previdências',
+    subtitle: 'Privadas',
+    avatar: require('../assets/images/previdencias.png'),
   },
 ]
 
@@ -38,10 +45,13 @@ const Cards = () => {
                 source={users.avatar}
               />
               <View style={styles.info}>
-                <Text>{users.title} </Text>
-                <Text>{users.subtitle} </Text>
+                <Text style={styles.title}>{users.title} </Text>
+                <Text style={styles.subTitle}>{users.subtitle} </Text>
               </View>
-              
+
+              {users.title == 'Fundos' && (
+                <Image source={require('../assets/images/new.png')} />
+              )}
             </View>
           </TouchableOpacity>
         )
@@ -57,18 +67,26 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderColor: '#1111',
     backgroundColor: 'white',
-    borderWidth: 1.1,
-    width: 330,
+    borderWidth: 2,
+    width: 351,
+    marginRight: 2,
     marginTop: 22,
     height: 160,
     lineHeight: 4,
-    
-    
+  },
+
+  title: {
+    color: '#7759c2',
+    fontWeight: 'bold'
+  },
+
+  subTitle: {
+    color: '#000000d3',
   },
 
   container: {
     alignItems: 'center',
-    
+
     justifyContent: 'center',
   },
   image: {
@@ -77,7 +95,10 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   info: {
+    flexDirection: 'column',
     fontSize: 16,
+    gap: 3,
+    width: 170,
     paddingLeft: 12,
     paddingTop: 1,
   },
