@@ -9,7 +9,9 @@ import {
 } from 'react-native'
 import { Text, Card, Button, Icon } from '@rneui/themed'
 import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { useRoute } from '@react-navigation/native'
+import {useNavigation} from '@react-navigation/native'
+import ImageButton from 'react-native-img-button';
 
 const users = [
   {
@@ -34,19 +36,25 @@ const users = [
 ]
 
 
-const onUsersPress = (title: string) => {
-  console.warn(title)
-}
-const Cards = () => {
 
-  return (
-    
+const Cards = () => {
+  const navigation = useNavigation()
+    return (
       <View style={styles.container}>
         {users.map((users) => {
+
+
           return (
             <TouchableOpacity
               key={users.id}
-              onPress={() => onUsersPress(users.title)}
+              onPress={() => {
+                switch (users.id) {
+                  case 'actions':
+                    return navigation.navigate({ name: 'Actions' })
+                  case 'fundos':
+                    return navigation.navigate({ name:'Fundos' })
+                }
+              }}
             >
               <View key={users.id} style={styles.user}>
                 <Image
@@ -67,8 +75,7 @@ const Cards = () => {
           )
         })}
       </View>
-    
-  )
+    )
 }
 
 const styles = StyleSheet.create({
@@ -79,7 +86,7 @@ const styles = StyleSheet.create({
     borderColor: '#1111',
     backgroundColor: 'white',
     borderWidth: 2,
-    width: 351,
+    width: 371,
     marginRight: 2,
     marginTop: 22,
     height: 160,
