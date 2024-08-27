@@ -13,6 +13,8 @@ import { useRoute } from '@react-navigation/native'
 import {useNavigation} from '@react-navigation/native'
 import ImageButton from 'react-native-img-button';
 
+
+
 const users = [
   {
     id: 'actions',
@@ -36,7 +38,6 @@ const users = [
 ]
 
 
-
 const Cards = () => {
   const navigation = useNavigation()
     return (
@@ -53,6 +54,9 @@ const Cards = () => {
                     return navigation.navigate({ name: 'Actions' })
                   case 'fundos':
                     return navigation.navigate({ name:'Fundos' })
+
+                  case 'previdencias':
+                    return navigation.navigate({name:'Previdencias'})
                 }
               }}
             >

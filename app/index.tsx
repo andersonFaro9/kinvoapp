@@ -15,6 +15,7 @@ import Cards from '../components/Cards/cards'
 import Actions from '../components/Actions/actions'
 import Fundos from '../components/Fundos/fundos'
 
+import Previdencias from '../components/Previdencias/previdencias'
 
 const Stack = createNativeStackNavigator()
 
@@ -41,6 +42,10 @@ export default function  App () {
           name='Fundos'
           
           component={Fundos}
+        />
+        <Stack.Screen
+          name='Previdencias'
+          component={Previdencias}
         />
       </Stack.Navigator>
     </NavigationContainer>
