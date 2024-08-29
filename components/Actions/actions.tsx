@@ -31,23 +31,24 @@ const Actions = () => {
         return (
           <TouchableOpacity key={users.id} onPress={() => {}}>
             <View style={styles.success}>
-              <View style = {styles.line}>
+              <View>
                 <Text style={styles.name}>Magazine Luiza</Text>
-                <Text style={styles.ticker}>MGLU3</Text>
-                <Text style={styles.minimum}>Valor minimo</Text>
-                <Text style={styles.minimum}>Rentabilidade</Text>
+                <Text style={styles.horizontalText}>MGLU3</Text>
+
+                <Divider />
+                <View style={styles.valor}>
+                  <Text>Valor minimo</Text>
+                  <Text>R$24,17</Text>
+                </View>
+
+                <View style={styles.valor}>
+                  <Text>Rentabilidade</Text>
+                  <Text style={styles.minimum}>27%</Text>
+                </View>
+                
               </View>
 
-              <View>
-                <Image
-                  style={styles.image}
-                  resizeMode='cover'
-                  source={users.avatar}
-                />
-                
-                <Text style={styles.value}>R$24,17</Text>
-                <Text>-27%</Text>
-              </View>
+              <Image style={styles.image} source={users.avatar} />
             </View>
           </TouchableOpacity>
         )
@@ -59,13 +60,11 @@ const Actions = () => {
 const styles = StyleSheet.create({
   success: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    gap: 142,
-    
+    justifyContent: 'space-around',
     fontSize: 16,
     width: 350,
     paddingTop: 12,
-    paddingLeft: 12,
+    paddingLeft: 28,
     borderRadius: 14,
     borderColor: '#1111',
     backgroundColor: 'white',
@@ -74,38 +73,48 @@ const styles = StyleSheet.create({
     height: 160,
   },
 
-  line : {
-    borderCurve:'circular' ,
-    
+  horizontalText: {
+    textAlign: 'left',
+    fontSize: 16,
+    borderEndWidth: 250,
+    marginVertical: 10,
   },
   value: {
     flexDirection: 'column',
     paddingTop: 42,
-    
+  },
+  valor: {
+    width: 120,
+
+    flexDirection: 'row',
+    gap: 162,
+    paddingTop: 12,
+    justifyContent: 'space-between',
   },
   name: {
     color: '#000000',
     fontWeight: 'bold',
     fontSize: 17,
+    paddingLeft: 2,
   },
 
   image: {
     width: 40,
+    marginRight: 22,
     height: 40,
   },
   ticker: {
     color: '#000000',
     fontWeight: '700',
     paddingTop: 0,
+
     marginBottom: 11,
     paddingBottom: 32,
-    
-    
   },
 
   minimum: {
-    gap: 222,
-    
+    letterSpacing: 1,
+    paddingLeft: 21,
   },
 
   minimumValue: {
