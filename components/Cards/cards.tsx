@@ -12,7 +12,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { useRoute } from '@react-navigation/native'
 import {useNavigation} from '@react-navigation/native'
 import ImageButton from 'react-native-img-button';
-
+import {StatusBar} from 'expo-status-bar'
 
 
 const users = [
@@ -42,9 +42,8 @@ const Cards = () => {
   const navigation = useNavigation()
     return (
       <View style={styles.container}>
+        
         {users.map((users) => {
-
-
           return (
             <TouchableOpacity
               key={users.id}
@@ -52,11 +51,10 @@ const Cards = () => {
                 switch (users.id) {
                   case 'actions':
                     return navigation.navigate({ name: 'Actions' })
-                  case 'fundos':
-                    return navigation.navigate({ name:'Fundos' })
+                  
 
                   case 'previdencias':
-                    return navigation.navigate({name:'Previdencias'})
+                    return navigation.navigate({ name: 'Previdencias' })
                 }
               }}
             >
@@ -68,7 +66,7 @@ const Cards = () => {
                 />
                 <View style={styles.info}>
                   <Text style={styles.title}>{users.title} </Text>
-                  <Text style={styles.subTitle}>{users.subtitle} </Text>
+                  <Text style={styles.subtitle}>{users.subtitle} </Text>
                 </View>
 
                 {users.title == 'Fundos' && (
@@ -102,8 +100,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  subTitle: {
+  subtitle: {
     color: '#000000d3',
+    
   },
 
   container: {

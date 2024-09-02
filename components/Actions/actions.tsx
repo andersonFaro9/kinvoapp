@@ -12,7 +12,9 @@ import { NavigationContainer } from '@react-navigation/native'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 import ImageButton from 'react-native-img-button'
+import { useEffect, useState } from 'react'
 
+import api from '../../app/api/api'
 const users = [
   {
     id: 'actions',
@@ -23,36 +25,73 @@ const users = [
  
 ]
 
+interface IActions {
+  id: string, 
+  name: string,
+  ticker: string,
+  minimumValue: string,
+  profitability:string,
+}
+
 const Actions = () => {
   const navigation = useNavigation()
+
+  const [actions,setActions] = useState<IActions[]>([])
+
+  const [loading,setLoading] = useState(false)
+  
+  async function getActions() {
+    setLoading(true)
+    try {
+      const actions = await api.get('/stocks').then((response) => {
+        console.log(response.data)
+      })
+      console.log('everything okay', actions)
+      setLoading(false)
+    } catch (err) {
+      console.log('fail', actions)
+    }
+  }
+  useEffect(() => {
+    getActions()
+  }, [actions])
+
+
+  
+  
   return (
     <View style={styles.container}>
-      {users.map((users) => {
-        return (
-          <TouchableOpacity key={users.id} onPress={() => {}}>
-            <View style={styles.success}>
-              <View>
-                <Text style={styles.name}>Magazine Luiza</Text>
-                <Text style={styles.horizontalText}>MGLU3</Text>
+      {loading ? (
+        <Text>carregando...</Text>
+      ) : (
+        <View>
+          {actions.map((details) => {
+            return (
+              <TouchableOpacity key={details.id} onPress={() => {}}>
+                <View style={styles.success}>
+                  <View>
+                    <Text style={styles.name}>{details.name}</Text>
+                    <Text style={styles.ticker}>{details.ticker}</Text>
 
-                <Divider />
-                <View style={styles.valor}>
-                  <Text>Valor minimo</Text>
-                  <Text>R$24,17</Text>
+                    <Divider />
+                    <View style={styles.minimumValue}>
+                      <Text>Valor minimo:</Text>
+                      <Text>R$24,17</Text>
+                    </View>
+
+                    <View style={styles.profitability}>
+                      <Text>Rentabilidade</Text>
+                      <Text style={styles.minimum}>27%</Text>
+                    </View>
+                  </View>
+
+                  <Image style={styles.image} source={users.avatar} />
                 </View>
-
-                <View style={styles.valor}>
-                  <Text>Rentabilidade</Text>
-                  <Text style={styles.minimum}>27%</Text>
-                </View>
-                
-              </View>
-
-              <Image style={styles.image} source={users.avatar} />
-            </View>
-          </TouchableOpacity>
-        )
-      })}
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+      )}
     </View>
   )
 }
@@ -72,10 +111,17 @@ const styles = StyleSheet.create({
     marginTop: 22,
     height: 160,
   },
-
-  horizontalText: {
+  name: {
+    color: '#000000',
+    fontWeight: 'bold',
+    fontSize: 17,
+    paddingLeft: 2,
+  },
+  ticker: {
     textAlign: 'left',
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000e5',
     borderEndWidth: 250,
     marginVertical: 10,
   },
@@ -83,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: 42,
   },
-  valor: {
+  minimumValue: {
     width: 120,
 
     flexDirection: 'row',
@@ -91,11 +137,14 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     justifyContent: 'space-between',
   },
-  name: {
-    color: '#000000',
-    fontWeight: 'bold',
-    fontSize: 17,
-    paddingLeft: 2,
+
+  profitability: {
+    width: 120,
+
+    flexDirection: 'row',
+    gap: 162,
+    paddingTop: 12,
+    justifyContent: 'space-between',
   },
 
   image: {
@@ -103,25 +152,12 @@ const styles = StyleSheet.create({
     marginRight: 22,
     height: 40,
   },
-  ticker: {
-    color: '#000000',
-    fontWeight: '700',
-    paddingTop: 0,
-
-    marginBottom: 11,
-    paddingBottom: 32,
-  },
 
   minimum: {
     letterSpacing: 1,
     paddingLeft: 21,
   },
 
-  minimumValue: {
-    color: '#000000',
-    fontWeight: 'normal',
-    fontSize: 17,
-  },
   container: {
     alignItems: 'center',
 

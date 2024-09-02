@@ -1,24 +1,20 @@
 import { Stack } from 'expo-router'
 
+
 export default function Layout() {
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: 'white',
-            
-          
-        },
+    
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#FFFF',
+          },
 
-                
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      }}
-    >
-      {/* Optionally configure static options outside the route.*/}
-      
-    </Stack>
+          headerTintColor: '#FFF',
+          headerShown: false,
+        }}
+      ></Stack>
+    
   )
 }
+
