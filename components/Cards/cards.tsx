@@ -1,18 +1,14 @@
 import React from 'react'
 import {
   View,
-  ScrollView,
+
   StyleSheet,
   Image,
   TouchableOpacity,
-  FlatList,
+
 } from 'react-native'
 import { Text, Card, Button, Icon } from '@rneui/themed'
-import { NavigationContainer } from '@react-navigation/native'
-import { useRoute } from '@react-navigation/native'
 import {useNavigation} from '@react-navigation/native'
-import ImageButton from 'react-native-img-button';
-import {StatusBar} from 'expo-status-bar'
 
 
 const users = [
@@ -20,20 +16,20 @@ const users = [
     id: 'actions',
     title: 'Ações',
     subtitle: 'Nacionais',
-    avatar: require('../../assets/images/action1.png'),
+    avatar: require('../../assets/images/actions.png'),
   },
   {
     id: 'fundos',
     title: 'Fundos',
     subtitle: 'De investimentos',
-    avatar: require('../../assets/images/investimento.png'),
+    avatar: require('../../assets/images/funds.png'),
   },
 
   {
     id: 'previdencias',
     title: 'Previdências',
     subtitle: 'Privadas',
-    avatar: require('../../assets/images/previdencias.png'),
+    avatar: require('../../assets/images/pension.png'),
   },
 ]
 
@@ -51,7 +47,6 @@ const Cards = () => {
                 switch (users.id) {
                   case 'actions':
                     return navigation.navigate({ name: 'Actions' })
-                  
 
                   case 'previdencias':
                     return navigation.navigate({ name: 'Previdencias' })
@@ -59,18 +54,17 @@ const Cards = () => {
               }}
             >
               <View key={users.id} style={styles.user}>
-                <Image
-                  style={styles.image}
-                  resizeMode='cover'
-                  source={users.avatar}
-                />
+                <View style={styles.avatar}>
+                  <Image style={styles.icon} source={users.avatar} />
+                </View>
                 <View style={styles.info}>
                   <Text style={styles.title}>{users.title} </Text>
                   <Text style={styles.subtitle}>{users.subtitle} </Text>
                 </View>
 
                 {users.title == 'Fundos' && (
-                  <Image source={require('../../assets/images/new.png')} />
+                  
+                  <Text style={styles.new}> Novo </Text>
                 )}
               </View>
             </TouchableOpacity>
@@ -102,18 +96,37 @@ const styles = StyleSheet.create({
 
   subtitle: {
     color: '#000000d3',
-    
   },
 
   container: {
     alignItems: 'center',
-    
+
     justifyContent: 'center',
   },
-  image: {
+  icon: {
+    width: 32,
+    height: 32,
+    margin: 17,
+    borderRadius: 2,
+    
+  },
+  avatar: {
     width: 70,
     height: 70,
-    marginLeft: 15,
+    marginLeft: 10,
+    borderRadius: 92,
+    backgroundColor: '#707B811A',
+  },
+
+  new: {
+    backgroundColor: '#36C4D6',
+    borderRadius: 23,
+    width: 92,
+    margin: 10,
+    color: 'white',
+    padding: 8,
+    textAlign: 'center',
+    height: 36,
   },
   info: {
     flexDirection: 'column',

@@ -14,23 +14,23 @@ import { useNavigation } from '@react-navigation/native'
 import ImageButton from 'react-native-img-button'
 import { useEffect, useState } from 'react'
 
-import api from '../../app/api/api'
+import {api} from '../../app/api/api'
 const users = [
   {
     id: 'actions',
     title: 'Ações',
     subtitle: 'Nacionais',
-    avatar: require('../../assets/images/heart.png'),
+    avatar: require('../../assets/images/heart_selected.png'),
   },
  
 ]
 
 interface IActions {
-  id: string, 
+  id: number, 
   name: string,
   ticker: string,
-  minimumValue: string,
-  profitability:string,
+  minimumValue: number,
+  profitability:number,
 }
 
 const Actions = () => {
@@ -40,25 +40,28 @@ const Actions = () => {
 
   const [loading,setLoading] = useState(false)
   
+  
+   useEffect(() => {
+    getActions()
+  }, [actions])
+  
+
   async function getActions() {
     setLoading(true)
     try {
-      const actions = await api.get('/stocks').then((response) => {
-        console.log(response.data)
-      })
-      console.log('everything okay', actions)
+      const actions = await api
+        .get('/stocks')
+        .then((response) => {
+          setActions(response.data)
+          console.log('everything okay', actions)
+        })
       setLoading(false)
+      
     } catch (err) {
       console.log('fail', actions)
     }
   }
-  useEffect(() => {
-    getActions()
-  }, [actions])
-
-
-  
-  
+ 
   return (
     <View style={styles.container}>
       {loading ? (
@@ -75,13 +78,15 @@ const Actions = () => {
 
                     <Divider />
                     <View style={styles.minimumValue}>
-                      <Text>Valor minimo:</Text>
-                      <Text>R$24,17</Text>
+                      <Text>Valor minimo: {details.minimumValue}</Text>
                     </View>
 
                     <View style={styles.profitability}>
-                      <Text>Rentabilidade</Text>
-                      <Text style={styles.minimum}>27%</Text>
+                      <Text>
+                        Rentabilidade:{details.profitability}
+                      
+                      </Text>
+                      
                     </View>
                   </View>
 
