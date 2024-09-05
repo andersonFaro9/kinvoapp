@@ -3,9 +3,11 @@ import {
   View,
   ScrollView,
   StyleSheet,
+  
   Image,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from 'react-native'
 import { Text, Card, Button, Icon, Divider } from '@rneui/themed'
 import { NavigationContainer } from '@react-navigation/native'
@@ -15,6 +17,7 @@ import ImageButton from 'react-native-img-button'
 import { useEffect, useState } from 'react'
 
 import {api} from '../../app/api/api'
+
 const users = [
   {
     id: 'actions',
@@ -40,32 +43,38 @@ const Actions = () => {
 
   const [loading,setLoading] = useState(false)
   
-  
-   useEffect(() => {
-    getActions()
-  }, [actions])
-  
-
   async function getActions() {
     setLoading(true)
-    try {
-      const actions = await api
-        .get('/stocks')
-        .then((response) => {
-          setActions(response.data)
-          console.log('everything okay', actions)
-        })
-      setLoading(false)
-      
-    } catch (err) {
-      console.log('fail', actions)
+     try {
+
+      const response = await fetch(
+        'https://6266f62263e0f382568936e4.mockapi.io/stocks'
+        
+      ) 
+      const json = await response.json()
+
+      setActions(json.data)
+     
+    } catch(error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
     }
+       
+
   }
+
+  useEffect(() => {
+    getActions()
+  }, [])
  
   return (
     <View style={styles.container}>
       {loading ? (
-        <Text>carregando...</Text>
+        <View style = {styles.load}>
+          <Image  source={require('../../assets/images/load.png')} />
+          {/* <ActivityIndicator size='large' color='#7759c2' /> */}
+        </View>
       ) : (
         <View>
           {actions.map((details) => {
@@ -82,11 +91,7 @@ const Actions = () => {
                     </View>
 
                     <View style={styles.profitability}>
-                      <Text>
-                        Rentabilidade:{details.profitability}
-                      
-                      </Text>
-                      
+                      <Text>Rentabilidade:{details.profitability}</Text>
                     </View>
                   </View>
 
@@ -115,6 +120,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginTop: 22,
     height: 160,
+  },
+
+  indicator: {
+     fontSize: 25, 
+  },
+  load: {
+    
+    margin: 100,
+    
   },
   name: {
     color: '#000000',
