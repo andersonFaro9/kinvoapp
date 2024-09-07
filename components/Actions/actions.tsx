@@ -3,11 +3,9 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  
   Image,
   TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
+  
 } from 'react-native'
 import { Text, Card, Button, Icon, Divider } from '@rneui/themed'
 import { NavigationContainer } from '@react-navigation/native'
@@ -16,17 +14,7 @@ import { useNavigation } from '@react-navigation/native'
 import ImageButton from 'react-native-img-button'
 import { useEffect, useState } from 'react'
 
-import {api} from '../../app/api/api'
-
-const users = [
-  {
-    id: 'actions',
-    title: 'Ações',
-    subtitle: 'Nacionais',
-    avatar: require('../../assets/images/heart_selected.png'),
-  },
- 
-]
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 interface IActions {
   id: number, 
@@ -34,10 +22,10 @@ interface IActions {
   ticker: string,
   minimumValue: number,
   profitability:number,
+  heart: string,
 }
 
 const Actions = () => {
-  const navigation = useNavigation()
 
   const [actions,setActions] = useState<IActions[]>([])
 
@@ -69,118 +57,90 @@ const Actions = () => {
   }, [])
  
   return (
+    <ScrollView>
     <View style={styles.container}>
-      {loading ? (
-        <View style = {styles.load}>
-          <Image  source={require('../../assets/images/load.png')} />
-          {/* <ActivityIndicator size='large' color='#7759c2' /> */}
-        </View>
-      ) : (
-        <View>
-          {actions.map((details) => {
-            return (
-              <TouchableOpacity key={details.id} onPress={() => {}}>
-                <View style={styles.success}>
-                  <View>
-                    <Text style={styles.name}>{details.name}</Text>
-                    <Text style={styles.ticker}>{details.ticker}</Text>
+      
+        {loading ? (
+          <View style={styles.load}>
+            <Image source={require('../../assets/images/load.png')} />
+          </View>
+        ) : (
+          <View>
+            {actions.map((details) => {
+              return (
+                <TouchableOpacity key={details.id} onPress={() => {}}>
+                  <View style={styles.success}>
+                    <View style={styles.name}>
+                      <Text>{details.name}</Text>
 
-                    <Divider />
-                    <View style={styles.minimumValue}>
-                      <Text>Valor minimo: {details.minimumValue}</Text>
+                      <Ionicons
+                        name='heart-outline'
+                        size={32}
+                        color='#7759c2'
+                      />
                     </View>
-
+                    <View style={styles.ticker}>
+                      <Text>{details.ticker}</Text>
+                    </View>
+                    <Divider style={styles.divider} />
+                    <View style={styles.minimumValue}>
+                      <Text>Valor minimo:</Text>
+                      <Text>{details.minimumValue}</Text>
+                    </View>
                     <View style={styles.profitability}>
-                      <Text>Rentabilidade:{details.profitability}</Text>
+                      <Text>Rentabilidade:</Text>
+                      <Text>{details.profitability}</Text>
                     </View>
                   </View>
-
-                  <Image style={styles.image} source={users.avatar} />
-                </View>
-              </TouchableOpacity>
-            )
-          })}
-        </View>
-      )}
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+        )}
+      
     </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   success: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-around',
-    fontSize: 16,
-    width: 350,
-    paddingTop: 12,
-    paddingLeft: 28,
+    width: 380,
+    paddingTop: 5,
+    paddingLeft: 22,
+    paddingRight: 42,
     borderRadius: 14,
     borderColor: '#1111',
     backgroundColor: 'white',
     borderWidth: 2,
-    marginTop: 22,
+    margin: 12,
     height: 160,
   },
-
-  indicator: {
-     fontSize: 25, 
-  },
-  load: {
-    
-    margin: 100,
-    
-  },
   name: {
-    color: '#000000',
-    fontWeight: 'bold',
-    fontSize: 17,
-    paddingLeft: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   ticker: {
-    textAlign: 'left',
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000e5',
-    borderEndWidth: 250,
-    marginVertical: 10,
-  },
-  value: {
+    marginTop: -12,
     flexDirection: 'column',
-    paddingTop: 42,
+    justifyContent: 'flex-start',
   },
+  divider: {
+    marginTop: 10,
+  },
+
   minimumValue: {
-    width: 120,
-
+    marginTop: 2,
     flexDirection: 'row',
-    gap: 162,
-    paddingTop: 12,
     justifyContent: 'space-between',
   },
-
   profitability: {
-    width: 120,
-
+   
+    marginBottom: 2,
     flexDirection: 'row',
-    gap: 162,
-    paddingTop: 12,
     justifyContent: 'space-between',
-  },
-
-  image: {
-    width: 40,
-    marginRight: 22,
-    height: 40,
-  },
-
-  minimum: {
-    letterSpacing: 1,
-    paddingLeft: 21,
-  },
-
-  container: {
-    alignItems: 'center',
-
-    justifyContent: 'center',
   },
 })
 
