@@ -6,7 +6,7 @@ import { Text, Card, Button, Icon } from '@rneui/themed'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Cards from '../components/Cards/cards'
-import Actions from '../components/Actions/actions'
+import Actions from './Actions/actions'
 import Fundos from '../components/Fundos/fundos'
 
 export default function Header() {

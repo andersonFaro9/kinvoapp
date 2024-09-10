@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
 
   container: {
     alignItems: 'center',
-
+    backgroundColor: '#ECF0F2',
     justifyContent: 'center',
   },
   icon: {

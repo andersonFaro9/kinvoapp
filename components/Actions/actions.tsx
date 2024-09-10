@@ -8,10 +8,7 @@ import {
   
 } from 'react-native'
 import { Text, Card, Button, Icon, Divider } from '@rneui/themed'
-import { NavigationContainer } from '@react-navigation/native'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
-import ImageButton from 'react-native-img-button'
+
 import { useEffect, useState } from 'react'
 
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -58,10 +55,9 @@ const Actions = () => {
  
   return (
     <ScrollView>
-    <View style={styles.container}>
-      
+      <View>
         {loading ? (
-          <View style={styles.load}>
+          <View style={styles.loading}>
             <Image source={require('../../assets/images/load.png')} />
           </View>
         ) : (
@@ -70,26 +66,35 @@ const Actions = () => {
               return (
                 <TouchableOpacity key={details.id} onPress={() => {}}>
                   <View style={styles.success}>
-                    <View style={styles.name}>
-                      <Text>{details.name}</Text>
-
-                      <Ionicons
-                        name='heart-outline'
-                        size={32}
-                        color='#7759c2'
-                      />
+                    <View style={styles.details}>
+                      <Text style={styles.name}>{details.name}</Text>
+                      <TouchableOpacity key={details.id} onPress={() => {}}>
+                        <Ionicons
+                          name='heart-outline'
+                          size={32}
+                          color='#7759c2'
+                        />
+                      </TouchableOpacity>
                     </View>
                     <View style={styles.ticker}>
-                      <Text>{details.ticker}</Text>
+                      <Text style={styles.details}>{details.ticker}</Text>
                     </View>
                     <Divider style={styles.divider} />
                     <View style={styles.minimumValue}>
-                      <Text>Valor minimo:</Text>
-                      <Text>{details.minimumValue}</Text>
+                      <Text style={styles.minimumValueText}>Valor minimo:</Text>
+                      
+                      <Text style={styles.details}>
+                        R$ {details.minimumValue}
+                      </Text>
                     </View>
+
                     <View style={styles.profitability}>
                       <Text>Rentabilidade:</Text>
-                      <Text>{details.profitability}</Text>
+
+                      <Text style={styles.profitabilityText}>
+                        <Ionicons name='arrow-down' size={15} />
+                        {details.profitability}%
+                      </Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -97,8 +102,7 @@ const Actions = () => {
             })}
           </View>
         )}
-      
-    </View>
+      </View>
     </ScrollView>
   )
 }
@@ -118,9 +122,20 @@ const styles = StyleSheet.create({
     margin: 12,
     height: 160,
   },
-  name: {
+
+  loading : {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    margin: 100,
+    alignItems: 'center'
+  },
+  details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    fontWeight: 'bold',
+  },
+  name: {
+    fontWeight: 'bold',
   },
   ticker: {
     marginTop: -12,
@@ -133,15 +148,25 @@ const styles = StyleSheet.create({
 
   minimumValue: {
     marginTop: 2,
+
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+
+  minimumValueText: {
+    
   },
   profitability: {
-   
-    marginBottom: 2,
+    marginBottom: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+
+  profitabilityText: {
+    color: '#E85D1F',
+    fontWeight: 'bold',
+  },
 })
+
 
 export default Actions
