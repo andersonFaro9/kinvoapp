@@ -18,11 +18,15 @@ import Fundos from '../../components/Fundos/fundos'
 import Previdencias from '../../components/Previdencias/previdencias'
 import arrow from '../../assets/images/arrow-back.png'
 
+
 const Stack = createNativeStackNavigator()
 
 export default function  AppRoutes () {
   return (
     <NavigationContainer independent={true}>
+      <View>
+        
+      </View>
       <Stack.Navigator>
         <Stack.Screen
           name='Desafio'
