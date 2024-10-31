@@ -1,18 +1,22 @@
-import React from 'react'
+import React, {FC} from 'react'
 import {
   View,
   ScrollView,
   StyleSheet,
   Image,
+  Switch,
   TouchableOpacity,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  Pressable,
   
 } from 'react-native'
 import { Text, Card, Button, Icon, Divider } from '@rneui/themed'
 
 import { useEffect, useState } from 'react'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import Ionicons from '@expo/vector-icons/Ionicons'
-
 interface IActions {
   id: number, 
   name: string,
@@ -20,14 +24,49 @@ interface IActions {
   minimumValue: number,
   profitability:number,
   heart: string,
+  
+}
+
+interface IFavorites {
+  id:number
+}
+// Ver esse tutorial:
+//https://community.draftbit.com/c/code-snippets/how-to-implement-add-to-favourite-feature-in-draftbit
+
+
+interface Restaurant {
+  id: number;
 }
 
 const Actions = () => {
 
   const [actions,setActions] = useState<IActions[]>([])
 
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   
+  const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
+
+  const [favoriteList, setFavoriteList] = useState<Restaurant[]> ([])
+
+  const onFavorite = (restaurant:Restaurant) => {
+    setFavoriteList([... favoriteList, restaurant])
+  };
+
+  const ifExists = (restaurant: Restaurant): boolean => {
+    if (favoriteList.some(item => item.id === restaurant.id)) {
+      return true;
+    }
+    return false;
+  };
+
+  
+  const onRemoveFavorite = (restaurant: Restaurant) => {
+    const filteredList = favoriteList.filter(
+      (item) => item.id !== restaurant.id
+    )
+    setFavoriteList(filteredList)
+  }
+
   async function getActions() {
     setLoading(true)
      try {
@@ -45,11 +84,11 @@ const Actions = () => {
     } finally {
       setLoading(false);
     }
-       
 
   }
 
-  useEffect(() => {
+
+   useEffect(() => {
     getActions()
   }, [])
  
@@ -63,18 +102,28 @@ const Actions = () => {
         ) : (
           <View>
             {actions.map((details) => {
+              
               return (
-                <TouchableOpacity key={details.id} onPress={() => {}}>
+                <TouchableOpacity
+                  key={details.id}
+                  onPress={() =>
+                    ifExists(details) ? onRemoveFavorite(details) : onFavorite(details)
+                  }
+                >
                   <View style={styles.success}>
-                    <View style={styles.details}>
+                    
+                      <View>
+                          <MaterialCommunityIcons
+                            name={ifExists(details)? 'heart' : 'heart-outline'}
+                            size={32}
+                            color={'red'}
+                          />
+                        
+                      </View>
+                    
+
+                    <View style={styles.details} key={details.id}>
                       <Text style={styles.name}>{details.name}</Text>
-                      <TouchableOpacity key={details.id} onPress={() => {}}>
-                        <Ionicons
-                          name='heart-outline'
-                          size={32}
-                          color='#7759c2'
-                        />
-                      </TouchableOpacity>
                     </View>
                     <View style={styles.ticker}>
                       <Text style={styles.details}>{details.ticker}</Text>
@@ -82,9 +131,9 @@ const Actions = () => {
                     <Divider style={styles.divider} />
                     <View style={styles.minimumValue}>
                       <Text style={styles.minimumValueText}>Valor minimo:</Text>
-                      
+
                       <Text style={styles.details}>
-                        R$ {details.minimumValue}
+                        R$ {currencyBRL(details.minimumValue)}
                       </Text>
                     </View>
 
