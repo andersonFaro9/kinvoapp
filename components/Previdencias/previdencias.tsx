@@ -20,6 +20,7 @@ interface IActions {
   redemptionTerm: number
   minimumValue: number
   profitability: number
+  screen:number
 }
 
 export default function Previdencias() {
@@ -29,7 +30,20 @@ export default function Previdencias() {
   
   const currencyBRL = (value: number) => value.toLocaleString('pt-BR' )
   
-  
+  const [filter, setFilter] = useState('')
+
+  function showFilter(_filter:string) {
+    setFilter(_filter)
+  }
+
+  function showRandomFilter() {
+    if(filter == "tax") {
+      console.log("test")
+      return actions.filter((action) => {
+          return action.tax === 0 
+      })  
+    }
+  }
   
   async function getActions() {
     setLoading(true)
@@ -37,9 +51,17 @@ export default function Previdencias() {
       const response = await fetch(
         'https://6266f62263e0f382568936e4.mockapi.io/pension'
       )
+      if (filter == 'tax') {
+        console.log('test')
+        return actions.filter((action) => {
+          return action.tax === 0
+        })
+      }
       const json = await response.json()
 
       setActions(json.data)
+      
+
     } catch (error) {
       console.log(error)
     } finally {
@@ -49,16 +71,25 @@ export default function Previdencias() {
 
   useEffect(() => {
     getActions()
-  }, [])
+    
+    let sho = showRandomFilter()
+    console.log(sho)
+    
+    setActions(sho!)
+    
+        
+  }, [filter])
+
 
   return (
     <ScrollView>
       <View style={styles.containerfilter}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{showFilter("tax")}}>
           <Text style={styles.taxTag}> SEM TAXA </Text>
+          
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {}} style={styles.filter}>
+        <TouchableOpacity onPress={() => { }} style={styles.filter}>
           <Text style={styles.minimumValueFilter}> R$ 100,00 </Text>
         </TouchableOpacity>
 
@@ -100,37 +131,51 @@ export default function Previdencias() {
                       </Text>
                     </View>
 
-                    <View style={styles.tax}>
-                      <Text>Taxa:</Text>
-                      <Text style={styles.valueBold}>
-                        {currencyBRL(details.tax)} %
-                      </Text>
-                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        showFilter('tax')
+                      }}
+                    >
+                      <View style={styles.tax}>
+                        <Text>Taxa:</Text>
 
-                    <View style={styles.redemptionTerm}>
-                      <Text>Resgate:</Text>
-                      <Text style={styles.textRedemptionTerm}>
                         <Text style={styles.valueBold}>
-                          D+{details.redemptionTerm}
-                        </Text>
-                      </Text>
-                    </View>
-                    <View style={styles.profitability}>
-                      <Text>Rentabilidade:</Text>
-
-                      <Text style={styles.valueBold}>
-                        <Ionicons
-                          color={'#E85D1F'}
-                          name='arrow-down'
-                          size={15}
-                        />
-
-                        <Text style={styles.profitabilityText}>
+                          {currencyBRL(details.tax)} %
                           
-                          {currencyBRL(details.profitability)} %
                         </Text>
-                      </Text>
-                    </View>
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => {}}>
+                      <View style={styles.redemptionTerm}>
+                        <Text>Resgate:</Text>
+                        <Text style={styles.textRedemptionTerm}>
+                          <Text style={styles.valueBold}>
+                            D+{details.redemptionTerm}
+                          </Text>
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => showFilter('profitability')}
+                    >
+                      <View style={styles.profitability}>
+                        <Text>Rentabilidade:</Text>
+
+                        <Text style={styles.valueBold}>
+                          <Ionicons
+                            color={'#E85D1F'}
+                            name='arrow-down'
+                            size={15}
+                          />
+
+                          <Text style={styles.profitabilityText}>
+                            {currencyBRL(details.profitability)} %
+                          </Text>
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
               )

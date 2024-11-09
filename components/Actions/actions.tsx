@@ -18,7 +18,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 interface IActions {
-  id: number, 
+  id?: number, 
   name: string,
   ticker: string,
   minimumValue: number,
@@ -27,42 +27,41 @@ interface IActions {
   
 }
 
-interface IFavorites {
-  id:number
-}
+
 // Ver esse tutorial:
 //https://community.draftbit.com/c/code-snippets/how-to-implement-add-to-favourite-feature-in-draftbit
 
 
-interface Restaurant {
+interface IHeart {
   id: number;
 }
 
 const Actions = () => {
 
-  const [actions,setActions] = useState<IActions[]>([])
+  const [actions, setActions] = useState<IActions[]>([
+    { name: '' },
+    { name: '' },
+  ])
 
   const [loading, setLoading] = useState(false)
   
   const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
 
-  const [favoriteList, setFavoriteList] = useState<Restaurant[]> ([])
+  const [favoriteList, setFavoriteList] = useState<IHeart[]>([])
 
-  const onFavorite = (restaurant:Restaurant) => {
-    setFavoriteList([... favoriteList, restaurant])
-  };
+  const onFavorite = (heart: IHeart) => {
+    setFavoriteList([...favoriteList, heart])
+  }
 
-  const ifExists = (restaurant: Restaurant): boolean => {
-    if (favoriteList.some(item => item.id === restaurant.id)) {
-      return true;
-    }
-    return false;
-  };
+  const ifExists = (heart: IHeart): boolean => {
+      return favoriteList.some((item)=>item.id === heart.id) && true;
+    
+  }
 
   
-  const onRemoveFavorite = (restaurant: Restaurant) => {
+  const onRemoveFavorite = (heart: IHeart) => {
     const filteredList = favoriteList.filter(
-      (item) => item.id !== restaurant.id
+      (item) => item.id !== heart.id
     )
     setFavoriteList(filteredList)
   }
@@ -102,28 +101,25 @@ const Actions = () => {
         ) : (
           <View>
             {actions.map((details) => {
-              
               return (
-                <TouchableOpacity
+                <TouchableWithoutFeedback
                   key={details.id}
                   onPress={() =>
-                    ifExists(details) ? onRemoveFavorite(details) : onFavorite(details)
+                    ifExists(details)
+                      ? onRemoveFavorite(details)
+                      : onFavorite(details)
                   }
                 >
                   <View style={styles.success}>
-                    
-                      <View>
-                          <MaterialCommunityIcons
-                            name={ifExists(details)? 'heart' : 'heart-outline'}
-                            size={32}
-                            color={'red'}
-                          />
-                        
-                      </View>
-                    
-
                     <View style={styles.details} key={details.id}>
                       <Text style={styles.name}>{details.name}</Text>
+                      <View style={styles.heart}>
+                        <MaterialCommunityIcons
+                          name={ifExists(details) ? 'heart' : 'heart-outline'}
+                          size={32}
+                          color={'#6f4dbf'}
+                        />
+                      </View>
                     </View>
                     <View style={styles.ticker}>
                       <Text style={styles.details}>{details.ticker}</Text>
@@ -146,12 +142,17 @@ const Actions = () => {
                       </Text>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </TouchableWithoutFeedback>
               )
-            })}
+              
+            } )}
+          
+
           </View>
+          
         )}
       </View>
+      
     </ScrollView>
   )
 }
@@ -172,6 +173,11 @@ const styles = StyleSheet.create({
     height: 160,
   },
 
+  heart: {
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
+
   loading : {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -180,6 +186,7 @@ const styles = StyleSheet.create({
   },
   details: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     fontWeight: 'bold',
   },
