@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native'
 import { Text, Card, Button, Icon, Divider } from '@rneui/themed'
 
@@ -17,10 +18,10 @@ interface IActions {
   name: string
   type: string
   tax: number
-  redemptionTerm: number
+   redemptionTerm: number
   minimumValue: number
   profitability: number
-  screen:number
+  
 }
 
 export default function Previdencias() {
@@ -30,18 +31,40 @@ export default function Previdencias() {
   
   const currencyBRL = (value: number) => value.toLocaleString('pt-BR' )
   
-  const [filter, setFilter] = useState('')
+  
+  const [taxFilter, setTaxFilter] = useState('')
+  const [cem, setCem] = useState('')
+  const [redemption, setRedemption] = useState('')
 
-  function showFilter(_filter:string) {
-    setFilter(_filter)
+
+  function showFilterTaxZero(_filter:string) {
+    setTaxFilter(_filter)
   }
 
-  function showRandomFilter() {
-    if(filter == "tax") {
-      console.log("test")
-      return actions.filter((action) => {
-          return action.tax === 0 
-      })  
+  function addTaxZeroFilter() {
+    if (taxFilter === 'tax') {
+      return actions.filter((action) => action.tax === 0)
+    }
+  }
+  
+  function showFilterMiniumCem(_cem: string) {
+    setCem(_cem)
+  }
+  
+  function addMinimumValue() {
+    if (cem === 'minimumValue') {
+      return actions.filter((action) => action.minimumValue === 100)
+    }
+  }
+
+  function showRedemptionTerm(redemption: string) {
+    setRedemption(redemption)
+    console.log(redemption)
+  }
+
+  function addRedemptionFilterDUm() {
+    if (redemption === 'redemptionTerm') {
+      return actions.filter((action) => action.redemptionTerm == 1)
     }
   }
   
@@ -51,17 +74,31 @@ export default function Previdencias() {
       const response = await fetch(
         'https://6266f62263e0f382568936e4.mockapi.io/pension'
       )
-      if (filter == 'tax') {
-        console.log('test')
-        return actions.filter((action) => {
-          return action.tax === 0
-        })
+      
+     
+
+      if (taxFilter === 'tax') {
+        return actions.filter((action) => action.tax === 0)
+        
       }
+      
+
+      if (cem === 'minimumValue') {
+        return actions.filter((action) => action.minimumValue === 100)
+      }
+
+      if (redemption === 'redemptionTerm') {
+        return actions.filter((action) => action.redemptionTerm == 1)
+        
+      }
+      
+      
+      
       const json = await response.json()
 
       setActions(json.data)
       
-
+      
     } catch (error) {
       console.log(error)
     } finally {
@@ -71,29 +108,35 @@ export default function Previdencias() {
 
   useEffect(() => {
     getActions()
+
+    const random = addTaxZeroFilter()
+
+    random != null && setActions(random)
+
+    const addCem = addMinimumValue()
+
+    addCem != null && setActions(addCem)
+
+    const addDUm = addRedemptionFilterDUm()
+
+    addDUm != null && setActions(addDUm)
     
-    let sho = showRandomFilter()
-    console.log(sho)
-    
-    setActions(sho!)
-    
-        
-  }, [filter])
+  }, [taxFilter, cem, redemption])
 
 
   return (
     <ScrollView>
       <View style={styles.containerfilter}>
-        <TouchableOpacity onPress={()=>{showFilter("tax")}}>
+        <TouchableOpacity onPress={()=>{showFilterTaxZero('tax')}}>
           <Text style={styles.taxTag}> SEM TAXA </Text>
           
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => { }} style={styles.filter}>
+        <TouchableOpacity onPress={() => { showFilterMiniumCem('minimumValue') }} style={styles.filter}>
           <Text style={styles.minimumValueFilter}> R$ 100,00 </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {}} style={styles.filter}>
+        <TouchableOpacity onPress={() => {showRedemptionTerm('redemptionTerm')}} style={styles.filter}>
           <Text style={styles.dPlus}> D+1 </Text>
         </TouchableOpacity>
       </View>
@@ -119,21 +162,29 @@ export default function Previdencias() {
                         )}
                       </TouchableOpacity>
                     </View>
+
                     <View style={styles.typeDetails}>
                       <Text style={styles.typeDetails}>{details.type}</Text>
                     </View>
                     <Divider style={styles.dividerValue} />
-                    <View style={styles.minimumValue}>
-                      <Text>Valor minimo:</Text>
 
-                      <Text style={styles.valueBold}>
-                        R$ {currencyBRL(details.minimumValue)}
-                      </Text>
-                    </View>
-
-                    <TouchableOpacity
+                    <TouchableWithoutFeedback
                       onPress={() => {
-                        showFilter('tax')
+                        showFilterMiniumCem('minimumValue')
+                      }}
+                    >
+                      <View style={styles.minimumValue}>
+                        <Text>Valor minimo:</Text>
+
+                        <Text style={styles.valueBold}>
+                          R$ {currencyBRL(details.minimumValue)}
+                        </Text>
+                      </View>
+                    </TouchableWithoutFeedback>
+
+                    <TouchableWithoutFeedback
+                      onPress={() => {
+                        showFilterTaxZero('tax')
                       }}
                     >
                       <View style={styles.tax}>
@@ -141,25 +192,26 @@ export default function Previdencias() {
 
                         <Text style={styles.valueBold}>
                           {currencyBRL(details.tax)} %
-                          
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
 
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableWithoutFeedback
+                      onPress={() => {
+                        showRedemptionTerm('redemptionTerm')
+                      }}
+                    >
                       <View style={styles.redemptionTerm}>
                         <Text>Resgate:</Text>
                         <Text style={styles.textRedemptionTerm}>
                           <Text style={styles.valueBold}>
-                            D+{details.redemptionTerm}
+                            D+ {details.redemptionTerm}
                           </Text>
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
 
-                    <TouchableOpacity
-                      onPress={() => showFilter('profitability')}
-                    >
+                    <TouchableWithoutFeedback>
                       <View style={styles.profitability}>
                         <Text>Rentabilidade:</Text>
 
@@ -175,7 +227,7 @@ export default function Previdencias() {
                           </Text>
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
                   </View>
                 </TouchableOpacity>
               )

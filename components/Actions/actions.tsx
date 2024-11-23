@@ -28,20 +28,15 @@ interface IActions {
 }
 
 
-// Ver esse tutorial:
-//https://community.draftbit.com/c/code-snippets/how-to-implement-add-to-favourite-feature-in-draftbit
-
-
 interface IHeart {
-  id: number;
+  id: number
+  name: string
 }
+
 
 const Actions = () => {
 
-  const [actions, setActions] = useState<IActions[]>([
-    { name: '' },
-    { name: '' },
-  ])
+  const [actions, setActions] = useState<IActions[]>([])
 
   const [loading, setLoading] = useState(false)
   
@@ -51,11 +46,20 @@ const Actions = () => {
 
   const onFavorite = (heart: IHeart) => {
     setFavoriteList([...favoriteList, heart])
+    
+     
   }
 
   const ifExists = (heart: IHeart): boolean => {
+      
       return favoriteList.some((item)=>item.id === heart.id) && true;
-    
+      
+  }
+
+  const onSortedFavorite = () => {
+    const sortedList = [... favoriteList].sort((a,b)=> a.name.localeCompare(b.name));
+    setFavoriteList(sortedList)
+    console.log('teste')
   }
 
   
@@ -101,15 +105,16 @@ const Actions = () => {
         ) : (
           <View>
             {actions.map((details) => {
+              
               return (
                 <TouchableWithoutFeedback
                   key={details.id}
                   onPress={() =>
+                    
                     ifExists(details)
                       ? onRemoveFavorite(details)
                       : onFavorite(details)
-                  }
-                >
+                }>
                   <View style={styles.success}>
                     <View style={styles.details} key={details.id}>
                       <Text style={styles.name}>{details.name}</Text>
@@ -145,8 +150,9 @@ const Actions = () => {
                 </TouchableWithoutFeedback>
               )
               
-            } )}
-          
+            }
+             )}
+           
 
           </View>
           
