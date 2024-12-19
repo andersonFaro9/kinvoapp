@@ -67,6 +67,28 @@ export default function Previdencias() {
       return actions.filter((action) => action.redemptionTerm == 1)
     }
   }
+
+  function applyFilters() {
+    let filteredActions = actions
+
+    if (taxFilter === 'tax') {
+      filteredActions = filteredActions.filter((action) => action.tax === 0)
+    }
+
+    if (cem === 'minimumValue') {
+      filteredActions = filteredActions.filter(
+        (action) => action.minimumValue === 100
+      )
+    }
+
+    if (redemption === 'redemptionTerm') {
+      filteredActions = filteredActions.filter(
+        (action) => action.redemptionTerm === 1
+      )
+    }
+
+    return filteredActions
+  }
   
   async function getActions() {
     setLoading(true)
@@ -108,6 +130,7 @@ export default function Previdencias() {
 
   useEffect(() => {
     getActions()
+    setActions(applyFilters())
 
     const random = addTaxZeroFilter()
 

@@ -33,68 +33,70 @@ interface IHeart {
   name: string
 }
 
+type Item = {
+  nome:string;
+  favorito:string;
+}
 
 const Actions = () => {
-
   const [actions, setActions] = useState<IActions[]>([])
-
   const [loading, setLoading] = useState(false)
-  
-  const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
-
   const [favoriteList, setFavoriteList] = useState<IHeart[]>([])
 
+  const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
+
+  // Função para adicionar à lista de favoritos
   const onFavorite = (heart: IHeart) => {
     setFavoriteList([...favoriteList, heart])
-    
-     
+    console.log(favoriteList)
   }
 
-  const ifExists = (heart: IHeart): boolean => {
-      
-      return favoriteList.some((item)=>item.id === heart.id) && true;
-      
-  }
-
-  const onSortedFavorite = () => {
-    const sortedList = [... favoriteList].sort((a,b)=> a.name.localeCompare(b.name));
-    setFavoriteList(sortedList)
-    console.log('teste')
-  }
-
-  
+  // Função para remover da lista de favoritos
   const onRemoveFavorite = (heart: IHeart) => {
-    const filteredList = favoriteList.filter(
-      (item) => item.id !== heart.id
-    )
+    const filteredList = favoriteList.filter((item) => item.id !== heart.id)
     setFavoriteList(filteredList)
   }
 
-  async function getActions() {
-    setLoading(true)
-     try {
-
-      const response = await fetch(
-        'https://6266f62263e0f382568936e4.mockapi.io/stocks'
-        
-      ) 
-      const json = await response.json()
-
-      setActions(json.data)
-     
-    } catch(error) {
-      console.log(error)
-    } finally {
-      setLoading(false);
-    }
-
+  // Verifica se a ação já foi favoritada
+  const ifExists = (heart: IHeart): boolean => {
+    return favoriteList.some((item) => item.id === heart.id)
   }
 
+  // Função para pegar as ações da API
+  async function getActions() {
+    setLoading(true)
+    try {
+      const response = await fetch(
+        'https://6266f62263e0f382568936e4.mockapi.io/stocks'
+      )
+      const json = await response.json()
+      setActions(json.data)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-   useEffect(() => {
+  // Chama a função para buscar as ações ao montar o componente
+  useEffect(() => {
     getActions()
   }, [])
- 
+
+  // Ordenação: favoritos primeiro e depois alfabeticamente
+  const sortedActions = actions
+    .map((action) => ({
+      ...action,
+      favorito: favoriteList.some((heart) => heart.id === action.id), // Marca se a ação é favorita
+    }))
+    .sort((a, b) => {
+      // Coloca os favoritos primeiro
+      if (a.favorito && !b.favorito) return -1
+      if (!a.favorito && b.favorito) return 1
+      // Se ambos são ou não favoritos, ordena alfabeticamente pelo nome
+      return a.name.localeCompare(b.name)
+    })
+
   return (
     <ScrollView>
       <View>
@@ -104,17 +106,16 @@ const Actions = () => {
           </View>
         ) : (
           <View>
-            {actions.map((details) => {
-              
+            {sortedActions.map((details) => {
               return (
                 <TouchableWithoutFeedback
                   key={details.id}
                   onPress={() =>
-                    
                     ifExists(details)
                       ? onRemoveFavorite(details)
                       : onFavorite(details)
-                }>
+                  }
+                >
                   <View style={styles.success}>
                     <View style={styles.details} key={details.id}>
                       <Text style={styles.name}>{details.name}</Text>
@@ -149,16 +150,10 @@ const Actions = () => {
                   </View>
                 </TouchableWithoutFeedback>
               )
-              
-            }
-             )}
-           
-
+            })}
           </View>
-          
         )}
       </View>
-      
     </ScrollView>
   )
 }
