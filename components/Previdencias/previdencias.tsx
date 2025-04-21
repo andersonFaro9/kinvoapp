@@ -18,109 +18,65 @@ interface IActions {
   name: string
   type: string
   tax: number
-   redemptionTerm: number
+  redemptionTerm: number
   minimumValue: number
   profitability: number
-  
 }
 
 export default function Previdencias() {
   const [actions, setActions] = useState<IActions[]>([])
-
   const [loading, setLoading] = useState(false)
-  
-  const currencyBRL = (value: number) => value.toLocaleString('pt-BR' )
-  
-  
+
+  const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
+
   const [taxFilter, setTaxFilter] = useState('')
   const [cem, setCem] = useState('')
-  const [redemption, setRedemption] = useState('')
+  const [redemption, setRedemption] = useState(0)
 
-
-  function showFilterTaxZero(_filter:string) {
+  // Função para atualizar o filtro de tax
+  function showFilterTaxZero(_filter: string) {
     setTaxFilter(_filter)
   }
 
-  function addTaxZeroFilter() {
-    if (taxFilter === 'tax') {
-      return actions.filter((action) => action.tax === 0)
-    }
-  }
-  
+  // Função para atualizar o filtro de cem
   function showFilterMiniumCem(_cem: string) {
     setCem(_cem)
   }
-  
-  function addMinimumValue() {
-    if (cem === 'minimumValue') {
-      return actions.filter((action) => action.minimumValue === 100)
-    }
-  }
 
-  function showRedemptionTerm(redemption: string) {
+  // Função para atualizar o filtro de redemption
+  function showRedemptionTerm( redemption: number) {
     setRedemption(redemption)
-    console.log(redemption)
   }
 
-  function addRedemptionFilterDUm() {
-    if (redemption === 'redemptionTerm') {
-      return actions.filter((action) => action.redemptionTerm == 1)
-    }
-  }
-
+  // Função que aplica todos os filtros
   function applyFilters() {
     let filteredActions = actions
 
-    if (taxFilter === 'tax') {
+    if (taxFilter ) {
       filteredActions = filteredActions.filter((action) => action.tax === 0)
     }
 
-    if (cem === 'minimumValue') {
-      filteredActions = filteredActions.filter(
-        (action) => action.minimumValue === 100
-      )
+    if (cem) {
+      filteredActions = filteredActions.filter( (action) => action.minimumValue === 100)
     }
 
-    if (redemption === 'redemptionTerm') {
-      filteredActions = filteredActions.filter(
-        (action) => action.redemptionTerm === 1
+    if (redemption ) {
+      filteredActions = filteredActions.filter( (action) => action.redemptionTerm === 1
       )
     }
 
     return filteredActions
   }
-  
+
+  // Função para obter ações da API
   async function getActions() {
     setLoading(true)
     try {
       const response = await fetch(
         'https://6266f62263e0f382568936e4.mockapi.io/pension'
       )
-      
-     
-
-      if (taxFilter === 'tax') {
-        return actions.filter((action) => action.tax === 0)
-        
-      }
-      
-
-      if (cem === 'minimumValue') {
-        return actions.filter((action) => action.minimumValue === 100)
-      }
-
-      if (redemption === 'redemptionTerm') {
-        return actions.filter((action) => action.redemptionTerm == 1)
-        
-      }
-      
-      
-      
       const json = await response.json()
-
       setActions(json.data)
-      
-      
     } catch (error) {
       console.log(error)
     } finally {
@@ -130,39 +86,36 @@ export default function Previdencias() {
 
   useEffect(() => {
     getActions()
-    setActions(applyFilters())
-
-    const random = addTaxZeroFilter()
-
-    random != null && setActions(random)
-
-    const addCem = addMinimumValue()
-
-    addCem != null && setActions(addCem)
-
-    const addDUm = addRedemptionFilterDUm()
-
-    addDUm != null && setActions(addDUm)
-    
+    const filteredActions = applyFilters()
+    setActions(filteredActions)
   }, [taxFilter, cem, redemption])
 
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <ScrollView>
       <View style={styles.containerfilter}>
-        <TouchableOpacity onPress={()=>{showFilterTaxZero('tax')}}>
+        <TouchableOpacity onPress={() => showFilterTaxZero('tax')}>
           <Text style={styles.taxTag}> SEM TAXA </Text>
-          
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => { showFilterMiniumCem('minimumValue') }} style={styles.filter}>
+        <TouchableOpacity
+          onPress={() => showFilterMiniumCem('minimumValue')}
+          style={styles.filter}
+        >
           <Text style={styles.minimumValueFilter}> R$ 100,00 </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {showRedemptionTerm('redemptionTerm')}} style={styles.filter}>
+        <TouchableOpacity
+          onPress={() => showRedemptionTerm(1)}
+          style={styles.filter}
+        >
           <Text style={styles.dPlus}> D+1 </Text>
         </TouchableOpacity>
       </View>
+
       <Divider style={styles.divider} />
       <View>
         {loading ? (
@@ -173,17 +126,10 @@ export default function Previdencias() {
           <View>
             {actions.map((details) => {
               return (
-                <TouchableOpacity key={details.id} onPress={() => {}}>
+                <TouchableOpacity key={details.id}>
                   <View style={styles.success}>
                     <View style={styles.detailsName}>
                       <Text style={styles.name}>{details.name}</Text>
-                      <TouchableOpacity key={details.id} onPress={() => {}}>
-                        {details.name == 'Adam XP Seg Prev I FIC FIM' && (
-                          <View style={styles.detailsNew}>
-                            <Text style={styles.new}> Novo </Text>
-                          </View>
-                        )}
-                      </TouchableOpacity>
                     </View>
 
                     <View style={styles.typeDetails}>
@@ -192,13 +138,10 @@ export default function Previdencias() {
                     <Divider style={styles.dividerValue} />
 
                     <TouchableWithoutFeedback
-                      onPress={() => {
-                        showFilterMiniumCem('minimumValue')
-                      }}
+                      onPress={() => showFilterMiniumCem('minimumValue')}
                     >
                       <View style={styles.minimumValue}>
                         <Text>Valor minimo:</Text>
-
                         <Text style={styles.valueBold}>
                           R$ {currencyBRL(details.minimumValue)}
                         </Text>
@@ -206,13 +149,10 @@ export default function Previdencias() {
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
-                      onPress={() => {
-                        showFilterTaxZero('tax')
-                      }}
+                      onPress={() => showFilterTaxZero('tax')}
                     >
                       <View style={styles.tax}>
                         <Text>Taxa:</Text>
-
                         <Text style={styles.valueBold}>
                           {currencyBRL(details.tax)} %
                         </Text>
@@ -220,9 +160,7 @@ export default function Previdencias() {
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
-                      onPress={() => {
-                        showRedemptionTerm('redemptionTerm')
-                      }}
+                      onPress={() => showRedemptionTerm(1)}
                     >
                       <View style={styles.redemptionTerm}>
                         <Text>Resgate:</Text>
@@ -237,14 +175,12 @@ export default function Previdencias() {
                     <TouchableWithoutFeedback>
                       <View style={styles.profitability}>
                         <Text>Rentabilidade:</Text>
-
                         <Text style={styles.valueBold}>
                           <Ionicons
                             color={'#E85D1F'}
                             name='arrow-down'
                             size={15}
                           />
-
                           <Text style={styles.profitabilityText}>
                             {currencyBRL(details.profitability)} %
                           </Text>
@@ -261,6 +197,7 @@ export default function Previdencias() {
     </ScrollView>
   )
 }
+
 const styles = StyleSheet.create({
   success: {
     flexDirection: 'column',

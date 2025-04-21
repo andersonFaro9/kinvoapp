@@ -33,10 +33,6 @@ interface IHeart {
   name: string
 }
 
-type Item = {
-  nome:string;
-  favorito:string;
-}
 
 const Actions = () => {
   const [actions, setActions] = useState<IActions[]>([])
@@ -62,7 +58,7 @@ const Actions = () => {
     return favoriteList.some((item) => item.id === heart.id)
   }
 
-  // Função para pegar as ações da API
+  
   async function getActions() {
     setLoading(true)
     try {
@@ -78,22 +74,20 @@ const Actions = () => {
     }
   }
 
-  // Chama a função para buscar as ações ao montar o componente
+  
   useEffect(() => {
     getActions()
   }, [])
 
-  // Ordenação: favoritos primeiro e depois alfabeticamente
-  const sortedActions = actions
-    .map((action) => ({
+  // Ordenação: favorita primeiro e depois alfabeticamente
+  const sortedActions = actions.map((action) => ({
       ...action,
-      favorito: favoriteList.some((heart) => heart.id === action.id), // Marca se a ação é favorita
-    }))
-    .sort((a, b) => {
+      favorite: favoriteList.some((heart) => heart.id === action.id), // Marca se a ação é favorita
+    })).sort((a, b) => {
       // Coloca os favoritos primeiro
-      if (a.favorito && !b.favorito) return -1
-      if (!a.favorito && b.favorito) return 1
-      // Se ambos são ou não favoritos, ordena alfabeticamente pelo nome
+      if (a.favorite && !b.favorite) return -1
+      if (!a.favorite && b.favorite) return 1
+      
       return a.name.localeCompare(b.name)
     })
 
