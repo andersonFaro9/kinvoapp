@@ -1,3 +1,5 @@
+// Função para atualizar o filtro de redemption
+
 import React from 'react'
 import {
   View,
@@ -9,7 +11,7 @@ import {
 } from 'react-native'
 import { Text, Card, Button, Icon, Divider } from '@rneui/themed'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 
@@ -25,48 +27,29 @@ interface IActions {
 
 export default function Previdencias() {
   const [actions, setActions] = useState<IActions[]>([])
+  const [currentFilter, setCurrentFilter] = useState<
+    'tax' | 'minimumValue' | 'redemption'
+  >('tax')
   const [loading, setLoading] = useState(false)
 
   const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
 
-  const [taxFilter, setTaxFilter] = useState('')
-  const [cem, setCem] = useState('')
-  const [redemption, setRedemption] = useState(0)
-
-  // Função para atualizar o filtro de tax
-  function showFilterTaxZero(_filter: string) {
-    setTaxFilter(_filter)
-  }
-
-  // Função para atualizar o filtro de cem
-  function showFilterMiniumCem(_cem: string) {
-    setCem(_cem)
-  }
-
-  // Função para atualizar o filtro de redemption
-  function showRedemptionTerm( redemption: number) {
-    setRedemption(redemption)
-  }
-
-  // Função que aplica todos os filtros
-  function applyFilters() {
-    let filteredActions = actions
-
-    if (taxFilter ) {
-      filteredActions = filteredActions.filter((action) => action.tax === 0)
+  // Aplicando todos os filtros usando useMemo
+  const filteredActions = useMemo(() => {
+    if (currentFilter === 'tax') {
+      return actions.filter((action) => action.tax === 0)
     }
 
-    if (cem) {
-      filteredActions = filteredActions.filter( (action) => action.minimumValue === 100)
+    if (currentFilter === 'minimumValue') {
+      return actions.filter((action) => action.minimumValue === 100)
     }
 
-    if (redemption ) {
-      filteredActions = filteredActions.filter( (action) => action.redemptionTerm === 1
-      )
+    if (currentFilter === 'redemption') {
+      return actions.filter((action) => action.redemptionTerm === 1)
     }
 
-    return filteredActions
-  }
+    return actions
+  }, [actions, currentFilter])
 
   // Função para obter ações da API
   async function getActions() {
@@ -86,33 +69,41 @@ export default function Previdencias() {
 
   useEffect(() => {
     getActions()
-    const filteredActions = applyFilters()
-    setActions(filteredActions)
-  }, [taxFilter, cem, redemption])
-
-  useEffect(() => {
-    
   }, [])
 
   return (
     <ScrollView>
       <View style={styles.containerfilter}>
-        <TouchableOpacity onPress={() => showFilterTaxZero('tax')}>
-          <Text style={styles.taxTag}> SEM TAXA </Text>
+        <TouchableOpacity onPress={() => setCurrentFilter('tax')}>
+          <Text
+            style={[styles.tag, currentFilter === 'tax' && styles.isActive]}
+          >
+            SEM TAXA
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setCurrentFilter('minimumValue')}>
+          <Text
+            style={[
+              styles.tag,
+              currentFilter === 'minimumValue' && styles.isActive,
+            ]}
+          >
+            R$ 100,00
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => showFilterMiniumCem('minimumValue')}
-          style={styles.filter}
+          onPress={() => setCurrentFilter('redemption')} // Correção aqui
         >
-          <Text style={styles.minimumValueFilter}> R$ 100,00 </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => showRedemptionTerm(1)}
-          style={styles.filter}
-        >
-          <Text style={styles.dPlus}> D+1 </Text>
+          <Text
+            style={[
+              styles.tag,
+              currentFilter === 'redemption' && styles.isActive,
+            ]}
+          >
+            D+1
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -124,7 +115,7 @@ export default function Previdencias() {
           </View>
         ) : (
           <View>
-            {actions.map((details) => {
+            {filteredActions.map((details) => {
               return (
                 <TouchableOpacity key={details.id}>
                   <View style={styles.success}>
@@ -138,7 +129,7 @@ export default function Previdencias() {
                     <Divider style={styles.dividerValue} />
 
                     <TouchableWithoutFeedback
-                      onPress={() => showFilterMiniumCem('minimumValue')}
+                      onPress={() => setCurrentFilter('minimumValue')}
                     >
                       <View style={styles.minimumValue}>
                         <Text>Valor minimo:</Text>
@@ -149,7 +140,7 @@ export default function Previdencias() {
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
-                      onPress={() => showFilterTaxZero('tax')}
+                      onPress={() => setCurrentFilter('tax')}
                     >
                       <View style={styles.tax}>
                         <Text>Taxa:</Text>
@@ -160,7 +151,7 @@ export default function Previdencias() {
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
-                      onPress={() => showRedemptionTerm(1)}
+                      onPress={() => setCurrentFilter('redemption')} // Correção aqui também
                     >
                       <View style={styles.redemptionTerm}>
                         <Text>Resgate:</Text>
@@ -230,14 +221,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     height: 42,
   },
-
-  taxTag: {
+  isActive: {
     backgroundColor: '#7759c2',
+    color: 'white',
+  },
+  tag: {
     borderRadius: 43,
     width: 110,
     fontWeight: '700',
     padding: 10,
-    color: 'white',
+    color: 'black',
+    backgroundColor: '#FFFFFF',
+    textAlign: 'center',
     height: 42,
   },
   tax: {
