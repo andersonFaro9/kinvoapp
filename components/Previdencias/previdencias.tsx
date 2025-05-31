@@ -26,29 +26,37 @@ interface IActions {
 }
 
 export default function Previdencias() {
-  const [actions, setActions] = useState<IActions[]>([])
-  const [currentFilter, setCurrentFilter] = useState<
-    'tax' | 'minimumValue' | 'redemption'
-  >('tax')
+  let [actions, setActions] = useState<IActions[]>([])
+  const [currentFilter, setCurrentFilter] = useState<''| 'tax' | 'minimumValue' | 'redemption'>('')
+  
   const [loading, setLoading] = useState(false)
 
   const currencyBRL = (value: number) => value.toLocaleString('pt-BR')
-
+    
   // Aplicando todos os filtros usando useMemo
+
+
+
   const filteredActions = useMemo(() => {
+    let filteredActions = actions
+
+    
     if (currentFilter === 'tax') {
-      return actions.filter((action) => action.tax === 0)
-    }
+      return filteredActions.filter((action) => action.tax === 0)
+    } 
 
     if (currentFilter === 'minimumValue') {
-      return actions.filter((action) => action.minimumValue === 100)
+      return filteredActions.filter((action) => action.minimumValue === 100)
     }
 
     if (currentFilter === 'redemption') {
-      return actions.filter((action) => action.redemptionTerm === 1)
+      return filteredActions.filter((action) => action.redemptionTerm === 1)
     }
 
-    return actions
+    
+    return filteredActions
+
+    
   }, [actions, currentFilter])
 
   // Função para obter ações da API
